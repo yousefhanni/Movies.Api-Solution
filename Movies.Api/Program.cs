@@ -9,7 +9,7 @@ namespace Movies.Api
 
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            // Add services to the container    .
             #region Configure Services 
             ///Services Collection => container ,I put inside it Services that will are available to App 
             ///that may Use it as dependencies through DI 
