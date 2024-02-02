@@ -1,3 +1,7 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Movies.DL.Data.Contexts;
+
 namespace Movies.Api
 {
     public class Program
@@ -14,12 +18,21 @@ namespace Movies.Api
             ///Services Collection => container ,I put inside it Services that will are available to App 
             ///that may Use it as dependencies through DI 
 
+            //Add the DbContext as a service to the dependency injection container
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            {
+            // sets the Connection string for the SQL Server by retrieving it from the application's configuration  
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
+
+
             ///AddControllers:Add Services to DI Container That App need it
             ///Such as MVC Services,AddCors,AddAuthorization,AddFormatterMappings,...
             builder.Services.AddControllers();
             //=>AddEndpointsApiExplorer:related to configuring or adding functionality related to API documentation.
             builder.Services.AddEndpointsApiExplorer();
 
+      
             builder.Services.AddCors();
 
             ///used to configure and enable Swagger documentation generation for your API. 
