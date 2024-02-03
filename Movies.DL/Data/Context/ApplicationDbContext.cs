@@ -1,18 +1,21 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Movies.DL.Models;
+using System.Reflection;
 
 namespace Movies.DL.Data.Contexts
 {
     public class ApplicationDbContext : DbContext
     {
-        public ApplicationDbContext(DbContextOptions options):base(options)
+        
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options):base(options)
         {
-            
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());  
+        }
+
+        public DbSet<Genre> Genres { get; set; }
     }
 }
