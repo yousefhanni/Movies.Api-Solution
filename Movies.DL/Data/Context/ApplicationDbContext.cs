@@ -17,5 +17,7 @@ namespace Movies.DL.Data.Contexts
         }
 
         public DbSet<Genre> Genres { get; set; }
+
+
     }
 }
