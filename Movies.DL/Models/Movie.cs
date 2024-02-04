@@ -13,7 +13,7 @@ namespace Movies.DL.Models
 
         public string? StoryLine { get; set; }//it's the sequence of events that unfolds in the movie
                                               
-        public byte[] Poster { get; set; }    //Save Posters inside Database
+        public string PosterUrl { get; set; }    
 
         public int GenreId { get; set; } //F.K
 

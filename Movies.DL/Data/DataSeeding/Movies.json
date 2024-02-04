@@ -1,0 +1,90 @@
+[
+  {
+    "Title": "Inception",
+    "Year": 2010,
+    "Rate": 8.8,
+    "StoryLine": "A thief enters the dreams of others to steal their secrets.",
+    "PosterUrl": "https://example.com/inception-poster.jpg",
+    "GenreId": 5
+  },
+  {
+    "Title": "The Shawshank Redemption",
+    "Year": 1994,
+    "Rate": 9.3,
+    "StoryLine": "Two imprisoned men bond over years, finding solace and eventual redemption.",
+    "PosterUrl": "https://example.com/shawshank-redemption-poster.jpg",
+    "GenreId": 2
+  },
+  {
+    "Title": "Pulp Fiction",
+    "Year": 1994,
+    "Rate": 8.9,
+    "StoryLine": "Various interconnected stories of crime in Los Angeles.",
+    "PosterUrl": "https://example.com/pulp-fiction-poster.jpg",
+    "GenreId": 3
+  },
+  {
+    "Title": "The Dark Knight",
+    "Year": 2008,
+    "Rate": 9.0,
+    "StoryLine": "Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.",
+    "PosterUrl": "https://example.com/dark-knight-poster.jpg",
+    "GenreId": 1
+  },
+  {
+    "Title": "Forrest Gump",
+    "Year": 1994,
+    "Rate": 8.8,
+    "StoryLine": "The life journey of a man with a low IQ but good intentions.",
+    "PosterUrl": "https://example.com/forrest-gump-poster.jpg",
+    "GenreId": 2
+  },
+  {
+    "Title": "The Matrix",
+    "Year": 1999,
+    "Rate": 8.7,
+    "StoryLine": "A computer hacker learns about the true nature of his reality and his role in the war against its controllers.",
+    "PosterUrl": "https://example.com/matrix-poster.jpg",
+    "GenreId": 5
+  },
+  {
+    "Title": "Schindler's List",
+    "Year": 1993,
+    "Rate": 8.9,
+    "StoryLine": "In German-occupied Poland during World War II, industrialist Oskar Schindler gradually becomes concerned for his Jewish workforce.",
+    "PosterUrl": "https://example.com/schindlers-list-poster.jpg",
+    "GenreId": 2
+  },
+  {
+    "Title": "Fight Club",
+    "Year": 1999,
+    "Rate": 8.8,
+    "StoryLine": "An insomniac office worker and a devil-may-care soapmaker form an underground fight club.",
+    "PosterUrl": "https://example.com/fight-club-poster.jpg",
+    "GenreId": 3
+  },
+  {
+    "Title": "The Godfather",
+    "Year": 1972,
+    "Rate": 9.2,
+    "StoryLine": "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+    "PosterUrl": "https://example.com/godfather-poster.jpg",
+    "GenreId": 1
+  },
+  {
+    "Title": "Titanic",
+    "Year": 1997,
+    "Rate": 7.8,
+    "StoryLine": "A seventeen-year-old aristocrat falls in love with a kind but poor artist aboard the luxurious, ill-fated R.M.S. Titanic.",
+    "PosterUrl": "https://example.com/titanic-poster.jpg",
+    "GenreId": 6
+  },
+  {
+    "Title": "Inglourious Basterds",
+    "Year": 2009,
+    "Rate": 8.3,
+    "StoryLine": "In Nazi-occupied France during World War II, a plan to assassinate Nazi leaders by a group of Jewish U.S. soldiers coincides with a theatre owner's vengeful plans for the same.",
+    "PosterUrl": "https://example.com/inglourious-basterds-poster.jpg",
+    "GenreId": 1
+  }
+]
