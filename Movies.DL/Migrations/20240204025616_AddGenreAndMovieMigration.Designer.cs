@@ -12,7 +12,7 @@ using Movies.DL.Data.Contexts;
 namespace Movies.DL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240204014957_AddGenreAndMovieMigration")]
+    [Migration("20240204025616_AddGenreAndMovieMigration")]
     partial class AddGenreAndMovieMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
