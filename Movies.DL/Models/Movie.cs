@@ -15,6 +15,9 @@ namespace Movies.DL.Models
                                               
         public byte[] Poster { get; set; }    //Save Posters inside Database
 
+        public int GenreId { get; set; } //F.K
+
+        public Genre Genre { get; set; }      //N.P[ONE]
 
     }
 }
