@@ -20,4 +20,8 @@
     <ProjectReference Include="..\Movies.BL\Movies.BL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+  </ItemGroup>
+
 </Project>

@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Movies.BL.Interfaces.Repository;
+using Movies.BL.Repositories;
 using Movies.DL.Data.Contexts;
 using Movies.DL.Data.DataSeeding;
 
@@ -26,6 +28,9 @@ namespace Movies.Api
             // sets the Connection string for the SQL Server by retrieving it from the application's configuration  
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
+
+            //Allow DI(Register to IGenericRepository) 
+            builder.Services.AddScoped(typeof(IGenericRepository<>),typeof(GenericRepository<>));
 
 
             ///AddControllers:Add Services to DI Container That App need it
