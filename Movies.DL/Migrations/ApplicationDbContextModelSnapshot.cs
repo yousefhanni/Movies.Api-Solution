@@ -36,7 +36,7 @@ namespace Movies.DL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Genres");
+                    b.ToTable("Genres", (string)null);
                 });
 
             modelBuilder.Entity("Movies.DL.Models.Movie", b =>
@@ -74,7 +74,7 @@ namespace Movies.DL.Migrations
 
                     b.HasIndex("GenreId");
 
-                    b.ToTable("Movies");
+                    b.ToTable("Movies", (string)null);
                 });
 
             modelBuilder.Entity("Movies.DL.Models.Movie", b =>

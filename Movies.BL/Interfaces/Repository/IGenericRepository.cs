@@ -1,5 +1,6 @@
-﻿using Movies.DL.Models;
-
+﻿using Movies.Api.Consts;
+using Movies.DL.Models;
+using System.Linq.Expressions;
 namespace Movies.BL.Interfaces.Repository
 {
     ///Why used BaseModel not Class keyword ? 
@@ -8,7 +9,7 @@ namespace Movies.BL.Interfaces.Repository
 
     public interface IGenericRepository<T> where T : BaseModel
     {
-       Task<IEnumerable<T>> GetAllAsync();
+       Task<IEnumerable<T>> GetAllAsync(Expression<Func<T,object>> orderby=null,string orderByDirection = Orderby.Ascending);
 
         Task<IEnumerable<T>> GetAllByIdAsync(int id);
 

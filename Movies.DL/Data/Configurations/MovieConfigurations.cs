@@ -22,6 +22,7 @@ namespace Movies.DL.Data.Configurations
              .IsRequired()
              .HasMaxLength(2500);
 
+
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Movies.DL.Data.DataSeeding
         {
             ///Dataseeding occurs 1 time only per Server 
             ///So,Check if there are no Genres in the database 
-           
+
             if (_dbContext.Genres.Count() == 0)
             {
                 // Read Genres data from a JSON file
@@ -53,4 +53,5 @@ namespace Movies.DL.Data.DataSeeding
             }
         }
     }
+
 }

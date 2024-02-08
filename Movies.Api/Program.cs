@@ -1,6 +1,8 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Movies.Api.Helpers;
 using Movies.BL.Interfaces.Repository;
 using Movies.BL.Repositories;
 using Movies.DL.Data.Contexts;
@@ -31,6 +33,11 @@ namespace Movies.Api
 
             //Allow DI(Register to IGenericRepository) 
             builder.Services.AddScoped(typeof(IGenericRepository<>),typeof(GenericRepository<>));
+
+            ///telling AutoMapper to scan the MappingProfiles class for AutoMapper profiles and
+            ///register them with the dependency injection container.
+            ///This allows you to use AutoMapper throughout your application to map between different types.  
+            builder.Services.AddAutoMapper(typeof(MappingProfiles));
 
 
             ///AddControllers:Add Services to DI Container That App need it

@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Movies.Api.Consts;
 using Movies.BL.Interfaces.Repository;
 using Movies.DL.Data.Contexts;
 using Movies.DL.Models;
+using System.Linq.Expressions;
 
 namespace Movies.BL.Repositories
 {
@@ -15,9 +17,27 @@ namespace Movies.BL.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync()
-         =>   await _context.Set<T>().ToListAsync();   
-     
+        //Get all With No Criteria
+        // public async Task<IEnumerable<T>> GetAllAsync()
+        //=>  await _context.Set<T>().ToListAsync();  
+
+        //Get all With Sorting Criteria
+        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, object>> orderby = null, string orderByDirection = Orderby.Ascending)
+        {
+            IQueryable<T> query = _context.Set<T>();
+
+            if (orderby != null)
+            {
+                if(orderByDirection == Orderby.Ascending)
+                query = query.OrderBy(orderby);
+                else
+                    query = query.OrderByDescending(orderby);
+            }
+
+            return await query.ToListAsync();
+        }
+
+
 
         public async Task<IEnumerable<T>> GetAllByIdAsync(int id)
         => await _context.Set<T>().Where(entity=>entity.Id == id).ToListAsync();   
@@ -29,7 +49,7 @@ namespace Movies.BL.Repositories
         public async Task<T?> AddAsync(T item)
         {
            await _context.Set<T>().AddAsync(item);   
-            _context.SaveChanges(); 
+            _context.SaveChanges(); //change state to added 
             return item;
         }
 
