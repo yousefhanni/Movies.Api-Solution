@@ -9,8 +9,8 @@ namespace Movies.BL.Interfaces.Repository
 
     public interface IGenericRepository<T> where T : BaseModel
     {
-       Task<IEnumerable<T>> GetAllAsync(Expression<Func<T,object>> orderby=null,string orderByDirection = Orderby.Ascending);
-
+       Task<IEnumerable<T>> GetAllAsync();
+        
         Task<IEnumerable<T>> GetAllByIdAsync(int id);
 
         Task<T?> GetByIdAsync(int id);
@@ -20,5 +20,7 @@ namespace Movies.BL.Interfaces.Repository
         Task<T> UpdateAsync(T item);    
 
         Task<T> DeleteAsync(T item);
+
+        Task<bool> IsvalidGenre(int genreId);
     }
 }

@@ -13,15 +13,15 @@ namespace Movies.DL.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Movie> builder)
         {
-            builder.Property(m => m.Title)
-                .IsRequired()
-                .HasMaxLength(250);
-
+             builder.Property(m => m.Title)
+             .HasMaxLength(250)
+              .IsRequired();
 
             builder.Property(m => m.StoryLine)
-             .IsRequired()
-             .HasMaxLength(2500);
+                   .HasMaxLength(2500)
+                   .IsRequired();
 
+       
 
         }
     }

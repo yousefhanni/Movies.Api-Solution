@@ -102,10 +102,13 @@ namespace Movies.Api
             ///This Not activation Authorization, to active Authorization you Must Add Configurations  
             app.UseAuthorization();
 
+            app.UseStaticFiles();
+
             ///When a request is made to your API, the MapControllers method ensures that the
             ///appropriate controller and action are invoked based on the request's route.
 
             app.MapControllers();
+
 
             /// It's often used as a final middleware in the pipeline and
             /// after execute it App will Run 

@@ -1,11 +1,10 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Movies.DL.Migrations
 {
-    public partial class AddGenreAndMovieMigration : Migration
+    public partial class First : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -32,7 +31,7 @@ namespace Movies.DL.Migrations
                     Year = table.Column<int>(type: "int", nullable: false),
                     Rate = table.Column<double>(type: "float", nullable: false),
                     StoryLine = table.Column<string>(type: "nvarchar(2500)", maxLength: 2500, nullable: false),
-                    Poster = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    PosterUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     GenreId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

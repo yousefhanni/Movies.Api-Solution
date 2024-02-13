@@ -7,9 +7,7 @@ using Movies.DL.Models;
 
 namespace Movies.Api.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class GenresController : ControllerBase
+    public class GenresController : ApiBaseController
     {
         private readonly IGenericRepository<Genre> _genresRepo;
         private readonly IMapper _mapper;
@@ -20,15 +18,26 @@ namespace Movies.Api.Controllers
             _mapper = mapper;
         }
 
-        //Get all With Sorting Criteria
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Genre>>> GetAllAsync()
         {
-            // Pass a lambda expression to specify sorting by genre name and pass orderDirection to specify type of sorting
-            var genres = await _genresRepo.GetAllAsync(g => g.Name, Orderby.Ascending);
+            var genres = await _genresRepo.GetAllAsync();
             return Ok(genres);
-        }
+        } 
 
+        ///Get specific Genre by id 
+        [HttpGet("{id}")]
+        public async Task<ActionResult>GetbyIdAsync(int id)
+        {
+            var existingGenre = await _genresRepo.GetByIdAsync(id);
+
+            if (existingGenre == null)
+            {
+                return NotFound($"No genre was found with ID:{id}");
+            }
+            return Ok(existingGenre);
+        }
 
         [HttpPost]
         public async Task<ActionResult> AddGenreAsync(GenreDto genre)

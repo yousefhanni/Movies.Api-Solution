@@ -9,6 +9,15 @@ namespace Movies.Api.Helpers
         public MappingProfiles()
         {
             CreateMap<GenreDto, Genre>();
+
+            CreateMap<MovieDto, Movie>().ReverseMap()
+              //.ForMember(d => d.PosterUrl, m => m.MapFrom(s =>$"https://localhost:7038/{s.PosterUrl}"));
+                .ForMember(d => d.PosterUrl, O => O.MapFrom<MoviePitureUrlResolver>());
+
+            CreateMap<MovieDetailsDto, Movie>().ReverseMap();
+
+          //  CreateMap<UpdateMovieDto, Movie>().ReverseMap();
+
         }
     }
 }
