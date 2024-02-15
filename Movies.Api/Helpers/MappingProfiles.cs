@@ -16,7 +16,6 @@ namespace Movies.Api.Helpers
 
             CreateMap<MovieDetailsDto, Movie>().ReverseMap();
 
-          //  CreateMap<UpdateMovieDto, Movie>().ReverseMap();
 
         }
     }

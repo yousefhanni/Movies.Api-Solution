@@ -10,10 +10,12 @@ namespace Movies.BL.Interfaces.Repository
     public interface IGenericRepository<T> where T : BaseModel
     {
        Task<IEnumerable<T>> GetAllAsync();
-        
-        Task<IEnumerable<T>> GetAllByIdAsync(int id);
+
+        Task<IEnumerable<T>> GetAllWithSpecsAsync(ISpecifications<T> spec);
 
         Task<T?> GetByIdAsync(int id);
+
+        Task<T> GetWithSpecAsync(ISpecifications<T> spec);
 
         Task<T?> AddAsync(T item);
 

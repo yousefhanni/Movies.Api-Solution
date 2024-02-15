@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Movies.Api.Dtos;
 using Movies.BL.Interfaces.Repository;
+using Movies.BL.Specifications;
+using Movies.BL.Specifications.MovieSpecs;
 using Movies.DL.Models;
 
 namespace Movies.Api.Controllers
@@ -23,7 +25,9 @@ namespace Movies.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Movie>>> GetAllAsync()
         {
-            var movies = await _moviesRepo.GetAllAsync();
+            var spec = new MovieWithGenreSpecifiations();  
+
+            var movies = await _moviesRepo.GetAllWithSpecsAsync(spec);
 
           return Ok(_mapper.Map<IEnumerable<Movie>, IEnumerable<MovieDetailsDto>>(movies));
 
@@ -34,31 +38,17 @@ namespace Movies.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult> GetbyIdAsync(int id)
         {
-            var existingMovie = await _moviesRepo.GetByIdAsync(id);
+            ///Create object from class MovieWithGenreSpecifiations that will Cary values of Specifications
+            ///that will pass it to (GetWithSpecAsync) and GetWithSpecAsync will pass Specifications to (GetQuery) method
+            var spec = new MovieWithGenreSpecifiations(id);
+
+            var existingMovie = await _moviesRepo.GetWithSpecAsync(spec);
 
             if (existingMovie == null)
             {
                 return NotFound($"No Movie was found with ID:{id}");
             }
             return Ok(_mapper.Map<Movie, MovieDetailsDto>(existingMovie));
-
-        }
-
-
-        //Get All Movies that have same Genreid(that have same Genre)
-        [HttpGet("GetbyGenreId")]    // GET: api/Movies/GetbyGenreId?genreId=2
-        public async Task<ActionResult> GetbyGenreIdAsync(int genreid)
-        {
-            var existingMovie = await _moviesRepo.GetAllByIdAsync(genreid);
-
-            /// If no movies are found for the provided genre ID(null) or the collection is empty,
-            ///return a 404 Not Found response
-            if (existingMovie == null || !existingMovie.Any())
-            {
-                return NotFound($"No Movie was found with genreid:{genreid}");
-            }
-
-            return Ok(_mapper.Map<IEnumerable<Movie>, IEnumerable<MovieDetailsDto>>(existingMovie));
 
         }
 

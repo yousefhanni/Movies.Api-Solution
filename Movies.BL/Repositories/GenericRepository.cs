@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Movies.BL.Interfaces;
 using Movies.BL.Interfaces.Repository;
+using Movies.BL.Specifications;
 using Movies.DL.Data.Contexts;
 using Movies.DL.Models;
 
@@ -17,33 +19,42 @@ namespace Movies.BL.Repositories
 
 
         public async Task<IEnumerable<T>> GetAllAsync()
-        {
-            if (typeof(T) == typeof(Genre))
-                return (IEnumerable<T>) await _context.Genres.OrderBy(x => x.Name).ToListAsync();
+        { 
+            //if (typeof(T) == typeof(Genre))
+            //    return (IEnumerable<T>) await _context.Set<Genre>().OrderBy(x => x.Name).ToListAsync();
 
-            else
-               return (IEnumerable<T>)await _context.Movies.OrderByDescending(c=>c.Rate).Include(x=>x.Genre).ToListAsync();
-        }
+            //else
+            //   return (IEnumerable<T>)await _context.Set<Movie>().OrderByDescending(c=>c.Rate).Include(x=>x.Genre).ToListAsync();
 
-
-        public async Task<IEnumerable<T>> GetAllByIdAsync(int id)
-        {
-            if (typeof(T) == typeof(Movie))
-                return (IEnumerable<T>)await _context.Movies.Where(m => m.GenreId == id || id == 0).OrderByDescending(c => c.Rate).Include(x => x.Genre).ToListAsync();
-
-            else
-            return await _context.Set<T>().Where(entity => entity.Id == id).ToListAsync();
+            return await _context.Set<T>().ToListAsync();
         }
 
 
         public async Task<T?> GetByIdAsync(int id)
         {
-            if (typeof(T) == typeof(Movie))
-                //Include() Method no accessible(accept) FindAsync method and accept FirstOrDefaultAsync()
-                return await _context.Set<Movie>().Include(g => g.Genre).FirstOrDefaultAsync(m => m.Id ==id) as T;
+            //if (typeof(T) == typeof(Movie))
+            //    //Include() Method no accessible(accept) FindAsync method and accept FirstOrDefaultAsync()
+            //    return await _context.Set<Movie>().Where(m => m.Id == id).Include(g => g.Genre).FirstOrDefaultAsync() as T;
 
-            else
+            //else
                 return await _context.Set<T>().FindAsync(id);
+        }
+
+
+        public async Task<IEnumerable<T>> GetAllWithSpecsAsync(ISpecifications<T> spec)
+        {
+            return await ApplySpecifications(spec).ToListAsync();
+        }
+
+        public async Task<T?> GetWithSpecAsync(ISpecifications<T> spec)
+        {
+           return await ApplySpecifications(spec).FirstOrDefaultAsync();
+        }
+
+
+        private IQueryable<T> ApplySpecifications(ISpecifications<T> spec)
+        {
+            return  SpecificationsEvaluator<T>.GetQuery(_context.Set<T>(), spec);
         }
 
        
@@ -52,7 +63,7 @@ namespace Movies.BL.Repositories
             await _context.Set<T>().AddAsync(item);
             _context.SaveChanges(); // Save changes synchronously
 
-            //Explicitly loads  =>
+            //Explicitly loads  => To load Genre at response 
             if (typeof(T) == typeof(Movie))
             {
                 var movie = item as Movie;
@@ -61,14 +72,6 @@ namespace Movies.BL.Repositories
 
             return item;
         }
-
-        //public async Task<T?> AddAsync(T item)
-        //{
-        //   await _context.Set<T>().AddAsync(item);   
-        //    _context.SaveChanges(); //change state to added 
-        //    return item;
-        //}
-
 
         public async Task<T> UpdateAsync(T item)
         {
@@ -88,6 +91,6 @@ namespace Movies.BL.Repositories
         ///returns true if such a genre exists, and false otherwise.
         public Task<bool> IsvalidGenre(int genreId) 
             => _context.Genres.AnyAsync(g => g.Id == genreId);
-       
-        }
+
+    }
     }

@@ -16,6 +16,7 @@ namespace Movies.Api.Helpers
 
         public string Resolve(Movie source, MovieDto destination, string? destMember, ResolutionContext context)
         {
+            //if PosterUrl exist 
             if (!string.IsNullOrEmpty(source.PosterUrl))
                 return $"{_configuration["ApiBaseUrl"]}/{source.PosterUrl}";
 
