@@ -24,6 +24,18 @@ namespace Movies.BL.Interfaces
         //There More than (include) => so, i will use list 
         public List<Expression<Func<T, object>>> Includes { get; set; }
 
+        //Two  Properties to Sorting 
+        public Expression<Func<T, object>> OrderBy { get; set; }
+
+        public Expression<Func<T, object>> OrderByDesc { get; set; }
+
+        public int Skip { get; set; }
+
+        public int Take { get; set; }
+
+        ///If true(Apply Pagination) => Set skip and Take with The value
+        ///and If false set skip and Take with Default value => (Zero)
+        public bool IsPaginationEnabled { get; set; }
 
     }
 }

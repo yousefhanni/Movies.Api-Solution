@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Movies.Api.Consts;
 using Movies.Api.Dtos;
 using Movies.BL.Interfaces.Repository;
+using Movies.BL.Specifications.GenreSpecs;
+using Movies.BL.Specifications.MovieSpecs;
 using Movies.DL.Models;
 
 namespace Movies.Api.Controllers
@@ -20,9 +22,11 @@ namespace Movies.Api.Controllers
 
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Genre>>> GetAllAsync()
+        public async Task<ActionResult<IReadOnlyList<Genre>>> GetAllAsync(string sort)
         {
-            var genres = await _genresRepo.GetAllAsync();
+            var spec = new GenreSpecifiations(sort);
+
+            var genres = await _genresRepo.GetAllWithSpecsAsync(spec);
             return Ok(genres);
         } 
 

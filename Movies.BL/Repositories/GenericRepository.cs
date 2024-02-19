@@ -10,54 +10,36 @@ namespace Movies.BL.Repositories
     public class GenericRepository<T> : IGenericRepository<T> where T : BaseModel
     {
         private readonly ApplicationDbContext _context;
-
         //Ask From ClR Create Object from DbContext 
         public GenericRepository( ApplicationDbContext context)
         {
             _context = context;
         }
 
-
-        public async Task<IEnumerable<T>> GetAllAsync()
-        { 
-            //if (typeof(T) == typeof(Genre))
-            //    return (IEnumerable<T>) await _context.Set<Genre>().OrderBy(x => x.Name).ToListAsync();
-
-            //else
-            //   return (IEnumerable<T>)await _context.Set<Movie>().OrderByDescending(c=>c.Rate).Include(x=>x.Genre).ToListAsync();
-
-            return await _context.Set<T>().ToListAsync();
-        }
+        public async Task<IReadOnlyList<T>> GetAllAsync()
+         =>  await _context.Set<T>().ToListAsync();
 
 
         public async Task<T?> GetByIdAsync(int id)
-        {
-            //if (typeof(T) == typeof(Movie))
-            //    //Include() Method no accessible(accept) FindAsync method and accept FirstOrDefaultAsync()
-            //    return await _context.Set<Movie>().Where(m => m.Id == id).Include(g => g.Genre).FirstOrDefaultAsync() as T;
+         =>  await _context.Set<T>().FindAsync(id);
+        
 
-            //else
-                return await _context.Set<T>().FindAsync(id);
-        }
-
-
-        public async Task<IEnumerable<T>> GetAllWithSpecsAsync(ISpecifications<T> spec)
-        {
-            return await ApplySpecifications(spec).ToListAsync();
-        }
+        public async Task<IReadOnlyList<T>> GetAllWithSpecsAsync(ISpecifications<T> spec)
+         =>  await ApplySpecifications(spec).ToListAsync();
+        
 
         public async Task<T?> GetWithSpecAsync(ISpecifications<T> spec)
-        {
-           return await ApplySpecifications(spec).FirstOrDefaultAsync();
-        }
-
-
-        private IQueryable<T> ApplySpecifications(ISpecifications<T> spec)
-        {
-            return  SpecificationsEvaluator<T>.GetQuery(_context.Set<T>(), spec);
-        }
-
+         =>   await ApplySpecifications(spec).FirstOrDefaultAsync();
        
+
+        public async Task<int> GetCountWithSpecAsync(ISpecifications<T> spec)
+         =>   await ApplySpecifications(spec).CountAsync();
+      
+           
+        private IQueryable<T> ApplySpecifications(ISpecifications<T> spec)
+         =>   SpecificationsEvaluator<T>.GetQuery(_context.Set<T>(), spec);
+   
+
         public async Task<T?> AddAsync(T item)
         {
             await _context.Set<T>().AddAsync(item);
@@ -91,6 +73,6 @@ namespace Movies.BL.Repositories
         ///returns true if such a genre exists, and false otherwise.
         public Task<bool> IsvalidGenre(int genreId) 
             => _context.Genres.AnyAsync(g => g.Id == genreId);
-
+    
     }
     }

@@ -1,6 +1,4 @@
-﻿using Movies.Api.Consts;
-using Movies.DL.Models;
-using System.Linq.Expressions;
+﻿using Movies.DL.Models;
 namespace Movies.BL.Interfaces.Repository
 {
     ///Why used BaseModel not Class keyword ? 
@@ -8,14 +6,16 @@ namespace Movies.BL.Interfaces.Repository
     ///so i use BaseModel as Domain Model,T will is BaseModel and  any class will inherit from BaseModel
 
     public interface IGenericRepository<T> where T : BaseModel
-    {
-       Task<IEnumerable<T>> GetAllAsync();
+    { 
+        Task<IReadOnlyList<T>> GetAllAsync();
 
-        Task<IEnumerable<T>> GetAllWithSpecsAsync(ISpecifications<T> spec);
+        Task<IReadOnlyList<T>> GetAllWithSpecsAsync(ISpecifications<T> spec);
 
         Task<T?> GetByIdAsync(int id);
 
         Task<T> GetWithSpecAsync(ISpecifications<T> spec);
+
+        Task<int> GetCountWithSpecAsync(ISpecifications<T> spec);
 
         Task<T?> AddAsync(T item);
 

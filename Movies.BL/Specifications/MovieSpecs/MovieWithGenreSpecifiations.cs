@@ -1,9 +1,5 @@
 ﻿using Movies.DL.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Movies.BL.Specifications.MovieSpecs
 {
@@ -12,10 +8,53 @@ namespace Movies.BL.Specifications.MovieSpecs
     {
         ///This Constructor will chain on Empty Parameterless Constructor
         ///that used for Creating an Object,That Will be used to Get All Movies
-        public MovieWithGenreSpecifiations():base()
+        public MovieWithGenreSpecifiations( MovieSpecParams specParams)
+            :base(g => //Criteria(filtering)
+                  //if (!specParams.GenreId.HasValue) is True will Get All movies and if part 02 is true will Get all Movies that have the same genreId
+                   (!specParams.GenreId.HasValue || g.GenreId == specParams.GenreId.Value) &&
+                  (string.IsNullOrEmpty(specParams.Search)|| g.Title.ToLower().Contains(specParams.Search))//Searching
+                                             
+            )
+
         {
-            Includes.Add(g=>g.Genre); // Criteria = null;
-        } 
+            Includes.Add(g=>g.Genre);  
+
+             
+            if (!string.IsNullOrEmpty(specParams.Sort))
+            {
+                switch (specParams.Sort)
+                {
+                    case "YearAsc":
+                        AddOrderBy(c=>c.Year); 
+                        break;
+                    case "YearDesc":
+                        AddOrderByDesc(c => c.Year);
+                        break;
+                    case "TitleAsc":
+                        AddOrderBy(c => c.Title);
+                        break;
+                    case "TitleDesc":
+                        AddOrderBy(c => c.Title); 
+                        break;
+                    case "GenreNameAsc":
+                        AddOrderBy(c => c.Genre.Name);
+                        break;
+                    case "GenreNameDesc":
+                        AddOrderBy(c => c.Genre.Name);
+                        break;
+                    default:
+                        AddOrderByDesc(c=>c.Rate);
+                        break;
+                }
+            } 
+
+            else 
+                AddOrderByDesc(c=> c.Rate);
+
+
+            ApplyPagination((specParams.PageIndex - 1) * specParams.PageSize, specParams.PageSize);
+
+        }
 
 
         ///This Constructor will chain on Constructor that will Set Criteria
@@ -25,6 +64,8 @@ namespace Movies.BL.Specifications.MovieSpecs
         {
             Includes.Add(g => g.Genre);
         }
+
+
 
 
     }

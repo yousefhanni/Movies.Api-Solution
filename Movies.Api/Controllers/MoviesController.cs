@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Movies.Api.Dtos;
+using Movies.Api.Helpers;
 using Movies.BL.Interfaces.Repository;
 using Movies.BL.Specifications;
 using Movies.BL.Specifications.MovieSpecs;
@@ -23,14 +24,25 @@ namespace Movies.Api.Controllers
         //Fetches all movies from the database, orders them by their Rating in descending order,
         //includes their associated genre information, and returns them 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Movie>>> GetAllAsync()
+        public async Task<ActionResult<Pagination<MovieDetailsDto>>> GetAllAsync([FromQuery] MovieSpecParams specParams)
         {
-            var spec = new MovieWithGenreSpecifiations();  
+           //[FromQuery]=>(Model Binding) instructs ASP.NET Core to bind data from the URL query string to the specParams parameter
+
+            ///Create object from class MovieWithGenreSpecifiations that will Cary values of Specifications
+            ///that will pass it to (GetAllWithSpecAsync) and (GetAllWithSpecAsync) will pass Specifications to (GetQuery) method that will build Query with Dynamic way
+            ///And if sent (genreId) at URL will Get all Movies that have the same genreId
+            var spec = new MovieWithGenreSpecifiations(specParams);  
 
             var movies = await _moviesRepo.GetAllWithSpecsAsync(spec);
+            //Data after Filteration,sorting and Pagination
+            var data = _mapper.Map<IReadOnlyList<Movie>, IReadOnlyList<MovieDetailsDto>>(movies);
 
-          return Ok(_mapper.Map<IEnumerable<Movie>, IEnumerable<MovieDetailsDto>>(movies));
+            var countSpec = new MoviesSpecsForCount(specParams);
 
+            var count = await _moviesRepo.GetCountWithSpecAsync(countSpec);
+            ///Any endpoint work with Pagination always has standard response =>
+            ///response is object consists of four properties =>1.PageIndex 2.PageSize 3.Count 4.Data itself 
+            return Ok(new Pagination<MovieDetailsDto>(specParams.PageIndex,specParams.PageSize, count, data));
         }
 
        
@@ -72,7 +84,9 @@ namespace Movies.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAsync(int id)
         {
-            var movie = await _moviesRepo.GetByIdAsync(id);
+            var spec = new MovieWithGenreSpecifiations(id);
+
+            var movie = await _moviesRepo.GetWithSpecAsync(spec);
 
             if (movie == null)
             {
@@ -88,7 +102,9 @@ namespace Movies.Api.Controllers
         public async Task<ActionResult> UpdateAsync(int id, [FromBody] MovieDto updatedMovieDto)
         {
             // Get specific movie
-            var existingMovie = await _moviesRepo.GetByIdAsync(id);
+            var spec = new MovieWithGenreSpecifiations(id);
+
+            var existingMovie = await _moviesRepo.GetWithSpecAsync(spec);
 
             if (existingMovie == null)
             {
