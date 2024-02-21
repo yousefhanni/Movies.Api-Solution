@@ -1,4 +1,5 @@
-﻿using Movies.DL.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using Movies.DL.Models;
 namespace Movies.BL.Interfaces.Repository
 {
     ///Why used BaseModel not Class keyword ? 
@@ -19,9 +20,9 @@ namespace Movies.BL.Interfaces.Repository
 
         Task<T?> AddAsync(T item);
 
-        Task<T> UpdateAsync(T item);    
+        void UpdateAsync(T entity);
 
-        Task<T> DeleteAsync(T item);
+        void DeleteAsync(T entity);
 
         Task<bool> IsvalidGenre(int genreId);
     }

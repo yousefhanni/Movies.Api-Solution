@@ -1,32 +1,30 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Movies.Api.Consts;
 using Movies.Api.Dtos;
-using Movies.BL.Interfaces.Repository;
+using Movies.BL.Interfaces.UnitOfWork;
 using Movies.BL.Specifications.GenreSpecs;
-using Movies.BL.Specifications.MovieSpecs;
 using Movies.DL.Models;
 
 namespace Movies.Api.Controllers
 {
     public class GenresController : ApiBaseController
     {
-        private readonly IGenericRepository<Genre> _genresRepo;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public GenresController(IGenericRepository<Genre> genresRepo, IMapper mapper)
+        public GenresController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _genresRepo = genresRepo;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
 
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<Genre>>> GetAllAsync(string sort)
+        public async Task<ActionResult<IReadOnlyList<Genre>>> GetAllAsync(string? sort)
         {
             var spec = new GenreSpecifiations(sort);
 
-            var genres = await _genresRepo.GetAllWithSpecsAsync(spec);
+            var genres = await _unitOfWork.GetRepository<Genre>().GetAllWithSpecsAsync(spec);
             return Ok(genres);
         } 
 
@@ -34,7 +32,7 @@ namespace Movies.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult>GetbyIdAsync(int id)
         {
-            var existingGenre = await _genresRepo.GetByIdAsync(id);
+            var existingGenre = await _unitOfWork.GetRepository<Genre>().GetByIdAsync(id);
 
             if (existingGenre == null)
             {
@@ -49,8 +47,9 @@ namespace Movies.Api.Controllers
             //Mapping(Copying) data from GenreDto to Genre
             var mappedGenre = _mapper.Map<GenreDto, Genre>(genre);
 
-            var Genre = await _genresRepo.AddAsync(mappedGenre);
+            var Genre = await _unitOfWork.GetRepository<Genre>().AddAsync(mappedGenre);
 
+            await _unitOfWork.CompleteAsync();  
             return Ok(Genre);
         }
 
@@ -58,7 +57,7 @@ namespace Movies.Api.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateAsync(int id, [FromBody] GenreDto updatedGenreDto)
         {
-            var existingGenre = await _genresRepo.GetByIdAsync(id);
+            var existingGenre = await _unitOfWork.GetRepository<Genre>().GetByIdAsync(id);
 
             if (existingGenre == null)
             {
@@ -67,24 +66,27 @@ namespace Movies.Api.Controllers
 
             _mapper.Map(updatedGenreDto, existingGenre);
 
-            var updatedGenre = await _genresRepo.UpdateAsync(existingGenre);
+           _unitOfWork.GetRepository<Genre>().UpdateAsync(existingGenre);
 
-            return Ok(updatedGenre);
+            await _unitOfWork.CompleteAsync();
+
+            return Ok(existingGenre);
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAsync(int id)
         {
-            var Genre = await _genresRepo.GetByIdAsync(id);
+            var Genre = await _unitOfWork.GetRepository<Genre>().GetByIdAsync(id);
 
             if (Genre == null)
             {
                 return NotFound($"No genre was found with ID:{id}"); //appropriate action if genre with given ID is not found
             }
 
-            var deletedGenre = await _genresRepo.DeleteAsync(Genre);
+            _unitOfWork.GetRepository<Genre>().DeleteAsync(Genre);
+            await _unitOfWork.CompleteAsync();
 
-            return Ok(deletedGenre);
+            return Ok(Genre);
         }
 
     }

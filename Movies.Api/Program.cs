@@ -1,9 +1,7 @@
 using AutoMapper;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Movies.Api.Helpers;
-using Movies.BL.Interfaces.Repository;
+using Movies.BL.Interfaces.UnitOfWork;
 using Movies.BL.Repositories;
 using Movies.DL.Data.Contexts;
 using Movies.DL.Data.DataSeeding;
@@ -32,7 +30,9 @@ namespace Movies.Api
             });
 
             //Allow DI(Register to IGenericRepository) 
-            builder.Services.AddScoped(typeof(IGenericRepository<>),typeof(GenericRepository<>));
+            //builder.Services.AddScoped(typeof(IGenericRepository<>),typeof(GenericRepository<>));
+            builder.Services.AddScoped(typeof(IUnitOfWork),typeof(UnitOfWork));
+
 
             ///telling AutoMapper to scan the MappingProfiles class for AutoMapper profiles and
             ///register them with the dependency injection container.

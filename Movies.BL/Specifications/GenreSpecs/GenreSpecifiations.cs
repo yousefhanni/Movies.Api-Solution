@@ -9,17 +9,17 @@ namespace Movies.BL.Specifications.GenreSpecs
 {
     public class GenreSpecifiations : BaseSpecifications<Genre>
     {
-        public GenreSpecifiations(string sort)
+        public GenreSpecifiations(string? sort)
             :base()
         {
             if (!string.IsNullOrEmpty(sort))
             {
                 switch (sort)
                 {
-                    case "nameAsc":
+                    case "NameAsc":
                         AddOrderBy(c => c.Name);
                         break;
-                    case "nameDesc":
+                    case "NameDesc":
                         AddOrderByDesc(c => c.Name);
                         break;
                     default:
