@@ -45,8 +45,6 @@ namespace Movies.BL.Repositories
         public async Task<T?> AddAsync(T item)
         {
             await _context.Set<T>().AddAsync(item);
-          // Save changes synchronously
-
             //Explicitly loads  => To load Genre at response 
             if (typeof(T) == typeof(Movie))
             {

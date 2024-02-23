@@ -1,8 +1,6 @@
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Movies.Api.Helpers;
-using Movies.BL.Interfaces.UnitOfWork;
-using Movies.BL.Repositories;
+using Movies.Api.Extensions;
+using Movies.Api.MiddleWares;
 using Movies.DL.Data.Contexts;
 using Movies.DL.Data.DataSeeding;
 
@@ -12,15 +10,17 @@ namespace Movies.Api
     {
         public static async Task Main(string[] args)
         {
-            ///Will Create WebApplicationBuilder that from Through it will
+            ///Will Create builder that from Through it will
             ///detrmine Services and Configurations that App will use it 
 
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container    .
             #region Configure Services 
-            ///Services Collection => container ,I put inside it Services that will are available to App 
-            ///that may Use it as dependencies through DI 
+
+            builder.Services.AddControllers();
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddCors();
 
             //Add the DbContext as a service to the dependency injection container
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -29,29 +29,10 @@ namespace Movies.Api
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
 
-            //Allow DI(Register to IGenericRepository) 
-            //builder.Services.AddScoped(typeof(IGenericRepository<>),typeof(GenericRepository<>));
-            builder.Services.AddScoped(typeof(IUnitOfWork),typeof(UnitOfWork));
+            //Call extension Function Contain on Some services,Function exists at user defined class(ApplicationServicesExtension)
+            builder.Services.AddApplicationServices();
 
-
-            ///telling AutoMapper to scan the MappingProfiles class for AutoMapper profiles and
-            ///register them with the dependency injection container.
-            ///This allows you to use AutoMapper throughout your application to map between different types.  
-            builder.Services.AddAutoMapper(typeof(MappingProfiles));
-
-
-            ///AddControllers:Add Services to DI Container That App need it
-            ///Such as MVC Services,AddCors,AddAuthorization,AddFormatterMappings,...
-            builder.Services.AddControllers();
-            //=>AddEndpointsApiExplorer:related to configuring or adding functionality related to API documentation.
-            builder.Services.AddEndpointsApiExplorer();
-
-      
-            builder.Services.AddCors();
-
-            ///used to configure and enable Swagger documentation generation for your API. 
-            ///ApiExplorer + AddSwaggerGen => Used to Generate Swagger documentation
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen();  
             #endregion
 
             var app = builder.Build();
@@ -80,11 +61,15 @@ namespace Movies.Api
                 var logger = loggerFactory.CreateLogger<Program>();
                 logger.LogError(ex, "an error has occured during apply the migration");
 
-            } 
+            }
             #endregion
 
 
             #region  Configure MiddleWares
+
+            //Will Execute Custom (Invoke Function) to handle Exception or Servererror 
+            app.UseMiddleware<ExceptionMiddleware>();   
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -93,26 +78,20 @@ namespace Movies.Api
                 app.UseSwaggerUI();
             }
 
+            app.UseStatusCodePagesWithReExecute("/errors/{0}"); //0 =>code,Redirect to Specific Endpoint
+
             //Add MiddleWare That will Redirection Http request to Https
             app.UseHttpsRedirection();
-
             app.UseCors();
-
             ///Add MiddleWare That will enable(Allow) Authorization Capabilities,
             ///This Not activation Authorization, to active Authorization you Must Add Configurations  
             app.UseAuthorization();
-
             app.UseStaticFiles();
-
-            ///When a request is made to your API, the MapControllers method ensures that the
+           ///When a request is made to your API, the MapControllers method ensures that the
             ///appropriate controller and action are invoked based on the request's route.
-
             app.MapControllers();
-
-
             /// It's often used as a final middleware in the pipeline and
             /// after execute it App will Run 
-
             app.Run();
             #endregion
 

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Movies.Api.Dtos;
+using Movies.Api.Errors;
 using Movies.BL.Interfaces.UnitOfWork;
 using Movies.BL.Specifications.GenreSpecs;
 using Movies.DL.Models;
@@ -36,14 +37,14 @@ namespace Movies.Api.Controllers
 
             if (existingGenre == null)
             {
-                return NotFound($"No genre was found with ID:{id}");
+                return NotFound(new ApiResponse(404, $"No Genre was found with ID:{id}"));
             }
             return Ok(existingGenre);
         }
 
         [HttpPost]
         public async Task<ActionResult> AddGenreAsync(GenreDto genre)
-        {
+        {        
             //Mapping(Copying) data from GenreDto to Genre
             var mappedGenre = _mapper.Map<GenreDto, Genre>(genre);
 
@@ -61,7 +62,7 @@ namespace Movies.Api.Controllers
 
             if (existingGenre == null)
             {
-                return NotFound($"No genre was found with ID:{id}"); //appropriate action if genre with given ID is not found
+                return NotFound(new ApiResponse(404, $"No Genre was found with ID:{id}")); //appropriate action if genre with given ID is not found
             }
 
             _mapper.Map(updatedGenreDto, existingGenre);
@@ -80,7 +81,7 @@ namespace Movies.Api.Controllers
 
             if (Genre == null)
             {
-                return NotFound($"No genre was found with ID:{id}"); //appropriate action if genre with given ID is not found
+                return NotFound(new ApiResponse(404, $"No Genre was found with ID:{id}")); //appropriate action if genre with given ID is not found
             }
 
             _unitOfWork.GetRepository<Genre>().DeleteAsync(Genre);

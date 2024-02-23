@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Movies.Api.Dtos;
+using Movies.Api.Errors;
 using Movies.Api.Helpers;
 using Movies.BL.Interfaces.UnitOfWork;
 using Movies.BL.Specifications.MovieSpecs;
@@ -57,7 +58,7 @@ namespace Movies.Api.Controllers
 
             if (existingMovie == null)
             {
-                return NotFound($"No Movie was found with ID:{id}");
+                return NotFound(new ApiResponse(404, $"No Movie was found with ID:{id}"));
             }
             return Ok(_mapper.Map<Movie, MovieDetailsDto>(existingMovie));
 
@@ -67,10 +68,11 @@ namespace Movies.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> AddMovieAsync(MovieDto movie)
         {
-            // Ensure that only valid genre IDs are accepted before proceeding with further operations related to the movie
+
+            //Ensure that only valid genre IDs are accepted at request body before proceeding with further operations related to the movie
             var isValidGenre = await _unitOfWork.GetRepository<Movie>().IsvalidGenre(movie.GenreId);
             if (!isValidGenre)
-                return BadRequest("Invalid genre ID!");
+                return BadRequest(new ApiResponse(400, "Invalid genre ID!"));
 
             var mappedMovie = _mapper.Map<MovieDto, Movie>(movie);
 
@@ -90,7 +92,7 @@ namespace Movies.Api.Controllers
 
             if (movie == null)
             {
-                return NotFound($"No genre was found with ID:{id}"); //appropriate action if movie with given ID is not found
+                return NotFound(new ApiResponse(404, $"No Movie was found with ID:{id}")); //appropriate action if movie with given ID is not found
             }
 
              _unitOfWork.GetRepository<Movie>().DeleteAsync(movie);
@@ -110,12 +112,12 @@ namespace Movies.Api.Controllers
 
             if (existingMovie == null)
             {
-                return NotFound($"No movie was found with ID:{id}"); // Appropriate action if movie with given ID is not found
+                return NotFound(new ApiResponse(404, $"No Movie was found with ID:{id}")); //Appropriate action if movie with given ID is not found
             }
             
             var isValidGenre = await _unitOfWork.GetRepository<Movie>().IsvalidGenre(updatedMovieDto.GenreId);
                if (!isValidGenre)
-                   return BadRequest("Invalid genere ID!");
+                   return BadRequest(new ApiResponse(400, "Invalid genre ID!"));
             
             // Check if the PosterUrl property is provided in the updatedMovieDto
             if (updatedMovieDto.PosterUrl == null)
