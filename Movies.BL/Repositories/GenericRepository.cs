@@ -45,11 +45,10 @@ namespace Movies.BL.Repositories
         public async Task<T?> AddAsync(T item)
         {
             await _context.Set<T>().AddAsync(item);
-            //Explicitly loads  => To load Genre at response 
             if (typeof(T) == typeof(Movie))
             {
                 var movie = item as Movie;
-                await _context.Entry(movie).Reference(m => m.Genre).LoadAsync();
+                await _context.Movies.Include(s => s.Genre).ToListAsync();
             }
 
             return item;
@@ -63,9 +62,9 @@ namespace Movies.BL.Repositories
           => _context.Remove(entity);
 
         ///Checks if there is any genre in the database with the provided genre ID and
-        ///returns true if such a genre exists, and false otherwise.
-        public Task<bool> IsvalidGenre(int genreId) 
-            => _context.Genres.AnyAsync(g => g.Id == genreId);
+        /////returns true if such a genre exists, and false otherwise.
+        //public Task<bool> IsvalidGenre(int genreId) 
+        //    => _context.Genres.AnyAsync(g => g.Id == genreId);
     
     }
     }

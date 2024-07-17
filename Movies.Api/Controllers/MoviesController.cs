@@ -68,10 +68,9 @@ namespace Movies.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> AddMovieAsync(MovieDto movie)
         {
-
-            //Ensure that only valid genre IDs are accepted at request body before proceeding with further operations related to the movie
-            var isValidGenre = await _unitOfWork.GetRepository<Movie>().IsvalidGenre(movie.GenreId);
-            if (!isValidGenre)
+            // Ensure that only valid genre IDs are accepted in the request body before proceeding with further operations related to the movie
+            var isValidGenre = await _unitOfWork.GetRepository<Genre>().GetByIdAsync(movie.GenreId);
+            if (isValidGenre == null)
                 return BadRequest(new ApiResponse(400, "Invalid genre ID!"));
 
             var mappedMovie = _mapper.Map<MovieDto, Movie>(movie);
@@ -114,10 +113,10 @@ namespace Movies.Api.Controllers
             {
                 return NotFound(new ApiResponse(404, $"No Movie was found with ID:{id}")); //Appropriate action if movie with given ID is not found
             }
-            
-            var isValidGenre = await _unitOfWork.GetRepository<Movie>().IsvalidGenre(updatedMovieDto.GenreId);
-               if (!isValidGenre)
-                   return BadRequest(new ApiResponse(400, "Invalid genre ID!"));
+            var isValidGenre = await _unitOfWork.GetRepository<Movie>().GetByIdAsync(updatedMovieDto.GenreId);
+            if (isValidGenre == null)
+                return BadRequest(new ApiResponse(400, "Invalid genre ID!"));
+
             
             // Check if the PosterUrl property is provided in the updatedMovieDto
             if (updatedMovieDto.PosterUrl == null)

@@ -24,6 +24,6 @@ namespace Movies.BL.Interfaces.Repository
 
         void DeleteAsync(T entity);
 
-        Task<bool> IsvalidGenre(int genreId);
+        //Task<bool> IsvalidGenre(int genreId);
     }
 }

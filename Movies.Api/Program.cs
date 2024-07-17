@@ -1,8 +1,12 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Movies.Api.Extensions;
 using Movies.Api.MiddleWares;
 using Movies.DL.Data.Contexts;
 using Movies.DL.Data.DataSeeding;
+using Movies.DL.Identity;
+using Movies.DL.Models.Identity;
 
 namespace Movies.Api
 {
@@ -32,6 +36,11 @@ namespace Movies.Api
             //Call extension Function Contain on Some services,Function exists at user defined class(ApplicationServicesExtension)
             builder.Services.AddApplicationServices();
 
+            // Add DbContext for AppIdentity with SQL Server configuration
+            builder.Services.AddDbContext<AppIdentityDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityConnection")));
+
+
             builder.Services.AddSwaggerGen();  
             #endregion
 
@@ -48,15 +57,19 @@ namespace Movies.Api
 
             var _dbContext = Services.GetRequiredService<ApplicationDbContext>();
 
+            var _identityDbContext = Services.GetRequiredService<AppIdentityDbContext>();//Take Object from DbContext To Security
+
+
             var loggerFactory = Services.GetRequiredService<ILoggerFactory>();
             try
             {
                 await _dbContext.Database.MigrateAsync(); //Update Database
-                await DataSeeding.SeedAsync(_dbContext);  //Data Seeding
+                await DataSeeding.SeedAsync(_dbContext);  //Data Seeding 
 
+                await _identityDbContext.Database.MigrateAsync();//Update-Database To Security
             }
 
-            catch (Exception ex)
+            catch (Exception ex) 
             {
                 var logger = loggerFactory.CreateLogger<Program>();
                 logger.LogError(ex, "an error has occured during apply the migration");
