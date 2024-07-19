@@ -1,5 +1,4 @@
-﻿using Movies.DL.Data.Contexts;
-using Movies.DL.Models;
+﻿using Movies.DL.Models;
 using System.Text.Json;
 
 namespace Movies.DL.Data.DataSeeding

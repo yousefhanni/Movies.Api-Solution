@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Movies.Api.Errors;
-using Movies.DL.Data.Contexts;
+using Movies.DL.Data;
 
 namespace Movies.Api.Controllers
 {

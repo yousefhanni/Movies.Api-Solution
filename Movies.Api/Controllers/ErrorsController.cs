@@ -8,14 +8,12 @@ namespace Movies.Api.Controllers
 
     [Route("errors/{code}")]
     [ApiController]
-    [ApiExplorerSettings(IgnoreApi = true)] 
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class ErrorsController : ControllerBase
     {
-        //EndPoint that Will Redirect to it incase that execute Not found Endpoint  
-
-        public ActionResult Error(int code)
+        public IActionResult Error(int code)
         {
-            return NotFound(new ApiResponse(code, "The EndPoint You are try to Get, Not Found"));
+            return new ObjectResult(new ApiResponse(code));
         }
     }
 }

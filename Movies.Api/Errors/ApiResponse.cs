@@ -1,34 +1,27 @@
-﻿
-namespace Movies.Api.Errors
+﻿using Microsoft.AspNetCore.Mvc;
+
+public class ApiResponse
 {
-    //Standard Response about (Not Found,badRequest,Non-Authorized) error
-    public class ApiResponse
+    public int StatusCode { get; set; }
+    public string Message { get; set; }
+
+    public ApiResponse(int statusCode, string message = null)
     {
-        public int StatusCode { get; set; }
+        StatusCode = statusCode;
+        Message = message ?? GetDefaultMessageForStatusCode(statusCode);
+    }
 
-        public string? Message { get; set; }
-
-        public ApiResponse(int statusCode, string? message = null)
+    private string GetDefaultMessageForStatusCode(int statusCode)
+    {
+        return statusCode switch
         {
-            StatusCode = statusCode;
-
-            Message = message ?? GetDefaultMessageForStatusCode(statusCode);
-        }
-
-
-        private string? GetDefaultMessageForStatusCode(int statusCode)
-        {
-            //Switch Expression, feature appeared at C# 8 
-            //switch on statusCode, if 400 return Bad Request ,else if.... 
-
-            return statusCode switch
-            {
-                400 => "Bad Request,you have made",
-                401 => "You are not Authorized",
-                404 => "Resource was not found",
-                500 => "Internal Server error",
-                _ => null,
-            };
-        }
+            400 => "Bad Request, you have made",
+            401 => "You are not Authorized",
+            404 => "Resource was not found",
+            500 => "Internal Server error",
+            _ => null
+        };
     }
 }
+
+

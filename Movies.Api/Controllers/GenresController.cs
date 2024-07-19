@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Movies.Api.Dtos;
 using Movies.Api.Errors;
@@ -8,6 +9,7 @@ using Movies.DL.Models;
 
 namespace Movies.Api.Controllers
 {
+    [Authorize]
     public class GenresController : ApiBaseController
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -19,19 +21,18 @@ namespace Movies.Api.Controllers
             _mapper = mapper;
         }
 
-
         [HttpGet]
+        [Authorize(Roles = "user,admin")]
         public async Task<ActionResult<IReadOnlyList<Genre>>> GetAllAsync(string? sort)
         {
             var spec = new GenreSpecifiations(sort);
-
             var genres = await _unitOfWork.GetRepository<Genre>().GetAllWithSpecsAsync(spec);
             return Ok(genres);
-        } 
+        }
 
-        ///Get specific Genre by id 
         [HttpGet("{id}")]
-        public async Task<ActionResult>GetbyIdAsync(int id)
+        [Authorize(Roles = "user,admin")]
+        public async Task<ActionResult> GetbyIdAsync(int id)
         {
             var existingGenre = await _unitOfWork.GetRepository<Genre>().GetByIdAsync(id);
 
@@ -43,52 +44,46 @@ namespace Movies.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult> AddGenreAsync(GenreDto genre)
-        {        
-            //Mapping(Copying) data from GenreDto to Genre
+        {
             var mappedGenre = _mapper.Map<GenreDto, Genre>(genre);
-
-            var Genre = await _unitOfWork.GetRepository<Genre>().AddAsync(mappedGenre);
-
-            await _unitOfWork.CompleteAsync();  
-            return Ok(Genre);
+            var genreEntity = await _unitOfWork.GetRepository<Genre>().AddAsync(mappedGenre);
+            await _unitOfWork.CompleteAsync();
+            return Ok(genreEntity);
         }
 
-
         [HttpPut("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult> UpdateAsync(int id, [FromBody] GenreDto updatedGenreDto)
         {
             var existingGenre = await _unitOfWork.GetRepository<Genre>().GetByIdAsync(id);
 
             if (existingGenre == null)
             {
-                return NotFound(new ApiResponse(404, $"No Genre was found with ID:{id}")); //appropriate action if genre with given ID is not found
+                return NotFound(new ApiResponse(404, $"No Genre was found with ID:{id}"));
             }
 
             _mapper.Map(updatedGenreDto, existingGenre);
-
-           _unitOfWork.GetRepository<Genre>().UpdateAsync(existingGenre);
-
+            _unitOfWork.GetRepository<Genre>().UpdateAsync(existingGenre);
             await _unitOfWork.CompleteAsync();
-
             return Ok(existingGenre);
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult> DeleteAsync(int id)
         {
-            var Genre = await _unitOfWork.GetRepository<Genre>().GetByIdAsync(id);
+            var genre = await _unitOfWork.GetRepository<Genre>().GetByIdAsync(id);
 
-            if (Genre == null)
+            if (genre == null)
             {
-                return NotFound(new ApiResponse(404, $"No Genre was found with ID:{id}")); //appropriate action if genre with given ID is not found
+                return NotFound(new ApiResponse(404, $"No Genre was found with ID:{id}"));
             }
 
-            _unitOfWork.GetRepository<Genre>().DeleteAsync(Genre);
+            _unitOfWork.GetRepository<Genre>().DeleteAsync(genre);
             await _unitOfWork.CompleteAsync();
-
-            return Ok(Genre);
+            return Ok(genre);
         }
-
     }
 }

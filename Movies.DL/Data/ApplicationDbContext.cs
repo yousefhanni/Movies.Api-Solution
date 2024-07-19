@@ -2,18 +2,18 @@
 using Movies.DL.Models;
 using System.Reflection;
 
-namespace Movies.DL.Data.Contexts
+namespace Movies.DL.Data
 {
     public class ApplicationDbContext : DbContext
     {
-        
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options):base(options)
+
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());  
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
 
         public DbSet<Genre> Genres { get; set; }

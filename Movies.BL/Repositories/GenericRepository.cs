@@ -2,7 +2,7 @@
 using Movies.BL.Interfaces;
 using Movies.BL.Interfaces.Repository;
 using Movies.BL.Specifications;
-using Movies.DL.Data.Contexts;
+using Movies.DL.Data;
 using Movies.DL.Models;
 
 namespace Movies.BL.Repositories
